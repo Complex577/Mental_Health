@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'self_evaluation',
     'whatsapp',
     'education',
+    'administrator',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", "http://localhost:5174", # or whatever your frontend URL is
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:5174"
 ]
 
 ROOT_URLCONF = 'akilitulivu_backend.urls'
@@ -131,3 +141,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True  # or limit to your domain/subdomain later
+
+CSRF_COOKIE_HTTPONLY = False  # Vue will read this
+CORS_ALLOW_CREDENTIALS = True

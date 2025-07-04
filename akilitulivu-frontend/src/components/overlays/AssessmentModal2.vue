@@ -2,18 +2,20 @@
   <div class="modal-overlay">
     <transition name="modal-grow" mode="out-in">
       <div class="modal">
-        <h2>{{ $t('PHQ9_title') }}</h2>
+        <h2>{{ currentTitle }}</h2>
+
+        <!-- Step 0: Choose Assessment Type -->
+        <div v-if="step === -1" class="intro-form">
+          <p class="guide">{{ $t('select_assessment_type') }}</p>
+          <button @click="selectAssessment('phq9')">{{ $t('depression_assessment') }}</button>
+          <button @click="selectAssessment('gad7')">{{ $t('anxiety_assessment') }}</button>
+          <button @click="selectAssessment('child')">{{ $t('assess_child') }}</button>
+        </div>
 
         <!-- Step 1: User Info -->
-        <div v-if="step === 0" class="intro-form">
-          <p class="guide">{{ $t('select_user_type') }}</p>
-          <select v-model="formData.userType">
-            <option disabled value="">{{ $t('choose_option') }}</option>
-            <option value="self">{{ $t('self') }}</option>
-            <option value="student">{{ $t('student') }}</option>
-          </select>
+        <div v-else-if="step === 0" class="intro-form">
 
-          <p class="guide">{{ $t('select_age_group') }}</p>
+          {{ formData.userType === 'child' ? $t('select_age_group_child') : $t('select_age_group') }}
           <select v-model="formData.ageGroup">
             <option disabled value="">{{ $t('choose_option') }}</option>
             <option value="5-10">5-10</option>
@@ -23,10 +25,10 @@
             <option value="26-30">26-30</option>
             <option value="31-35">31-35</option>
             <option value="36-40">36-40</option>
-            <option value="40+">40+</option>
+            <option value="41+">40+</option>
           </select>
 
-          <p class="guide">{{ $t('select_sex') }}</p>
+          {{ formData.userType === 'child' ? $t('select_sex_child') : $t('select_sex') }}
           <select v-model="formData.sex">
             <option disabled value="">{{ $t('choose_option') }}</option>
             <option value="male">{{ $t('male') }}</option>
@@ -36,7 +38,7 @@
           <button :disabled="!formComplete" @click="step = 1">{{ $t('start_assessment') }}</button>
         </div>
 
-        <!-- Step 2: Questions -->
+        <!-- Step 2: Assessment Questions -->
         <div v-else-if="step <= questions.length">
           <div class="progress-wrapper">
             <div class="progress-text">{{ step }} / {{ questions.length }}</div>
@@ -60,7 +62,7 @@
 
         <!-- Step 3: Results -->
         <div class="result" v-if="step > questions.length">
-          <p class="score">{{ $t('your_score') }}: {{ totalScore }} <i><b>{{ $t('out_of') }}</b></i> 27</p>
+          <p class="score">{{ $t('your_score') }}: {{ totalScore }} <i><b>{{ $t('out_of') }}</b></i> {{ maxScore }}</p>
 
           <div v-if="loading" class="loading">
             ⏳ <span class="dots">{{ $t('janja_typing') }}</span>
@@ -100,27 +102,36 @@ export default {
   emits: ["close"],
   data() {
     return {
-      step: 0,
+      step: -1,
+      selectedTest: null,
       totalScore: 0,
       loading: false,
       aiMessage: "",
       aiMessageHTML: "",
       redirectLink: null,
       scores: [],
+      questions: [],
       formData: {
         userType: "",
         ageGroup: "",
         sex: ""
-      },
-      questions: Array.from({ length: 9 }, (_, i) => ({
-        text: this.$t(`PHQ-9_${i + 1}`),
-        options: this.opts()
-      }))
+      }
     };
   },
   computed: {
     formComplete() {
       return this.formData.userType && this.formData.ageGroup && this.formData.sex;
+    },
+    maxScore() {
+      return this.questions.length * 3;
+    },
+    currentTitle() {
+      switch (this.selectedTest) {
+        case 'phq9': return this.$t('PHQ9_title');
+        case 'gad7': return this.$t('GAD7_title');
+        case 'child': return this.$t('Child_title');
+        default: return this.$t('choose_assessment');
+      }
     }
   },
   methods: {
@@ -131,6 +142,19 @@ export default {
         { text: this.$t('PHQ-Option_3'), score: 2 },
         { text: this.$t('PHQ-Option_4'), score: 3 },
       ];
+    },
+    selectAssessment(type) {
+      this.selectedTest = type;
+      this.questions = Array.from({ length: type === 'phq9' ? 9 : 7 }, (_, i) => ({
+        text: this.$t(`${type.toUpperCase()}_${i + 1}`),
+        options: this.opts()
+      }));
+      if (type === "phq9" || type === "gad7") {
+        this.formData.userType = 'self';
+      } else {
+        this.formData.userType = 'child';
+      }
+      this.step = 0;
     },
     async select(score) {
       this.scores.push(score);
@@ -145,7 +169,7 @@ export default {
       this.loading = true;
       try {
         const lang_sample = this.questions[0].text;
-        const res = await fetch("http://localhost:8000/api/assessment/phq9/", {
+        const res = await fetch(`http://localhost:8000/api/assessment/${this.selectedTest}/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -160,7 +184,7 @@ export default {
         const data = await res.json();
         this.aiMessage = data.response || "*Could not retrieve AI insight.*";
         this.aiMessageHTML = marked.parse(this.aiMessage);
-        this.redirectLink = data.redirect_link || null; // e.g., "/followup/abc123"
+        this.redirectLink = data.redirect_link || null;
 
       } catch (err) {
         this.aiMessage = "*Network issue. Try again later.*";
@@ -175,7 +199,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .modal-overlay {

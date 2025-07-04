@@ -23,4 +23,5 @@ urlpatterns = [
     path("api/assessment/", include("self_evaluation.urls")),
     path("api/education/", include("education.urls")),
     path("api/experts/", include("experts.urls")),
+    path("api/admin/", include("administrator.urls")),
 ]

@@ -120,11 +120,11 @@ def akili_chat_deepseek(request):
         # Append the current user input
         messages.append({"role": "user", "content": user_input})
 
-        chat_response = client_deepseek.chat.completions.create(
-            model="deepseek-chat",
+        chat_response = client.chat.completions.create(
+            model="gpt-4o",
             messages=messages,
-            temperature=0.5,
-            stream=False
+            temperature=0.7,
+            # stream=False
         )
 
         content = chat_response.choices[0].message.content

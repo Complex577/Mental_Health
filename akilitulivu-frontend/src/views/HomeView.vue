@@ -9,7 +9,6 @@
     <p>{{ $t('welcome') }}</p>
     <div class="grid">
       <DashboardCard :icon="'/assets/akili-assessment.png'" :title="$t('PHQ9_title')" :description="$t('PHQ9_description')" @click="modal = 'assessment'" />
-      <DashboardCard :icon="'/assets/akili-assessment.png'" :title="$t('GAD7_title')" :description="$t('GAD7_description')" @click="modal = 'assessmentGAD7'" />
       <DashboardCard :icon="'/assets/akili-chat.png'" :title="$t('nlp_chat')" :description="$t('nlp_description')" @click="openNLPModal" />
       <DashboardCard :icon="'/assets/akili-edu.png'" :title="$t('rule_chat')" :description="$t('rule_description')" @click="modal = 'rule'" />
       <DashboardCard :icon="'/assets/akili-assessment.png'" :title="$t('experts')" :description="$t('experts_description')" @click="modal = 'experts'" />
@@ -129,15 +128,24 @@ hr {
   text-align: center;
   margin-top: 2rem;
 }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+@media (min-width: 50px) {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(360px, 1fr));
+    gap: 20px;
+  }
 }
-
 .grid > * {
   height: 180px;
+  width: 85%;
+  max-width: 400px;
+}
+.grid {
+  
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 /* Floating Bot Styles */
