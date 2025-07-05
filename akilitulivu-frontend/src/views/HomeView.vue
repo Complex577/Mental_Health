@@ -8,7 +8,7 @@
     <h1 class="heading">{{ $t('title') }}</h1>
     <p>{{ $t('welcome') }}</p>
     <div class="grid">
-      <DashboardCard :icon="'/assets/akili-assessment.png'" :title="$t('PHQ9_title')" :description="$t('PHQ9_description')" @click="modal = 'assessment'" />
+      <DashboardCard :icon="'/assets/akili-assessment.png'" :title="$t('assessment_title')" :description="$t('PHQ9_description')" @click="modal = 'assessment'" />
       <DashboardCard :icon="'/assets/akili-chat.png'" :title="$t('nlp_chat')" :description="$t('nlp_description')" @click="openNLPModal" />
       <DashboardCard :icon="'/assets/akili-edu.png'" :title="$t('rule_chat')" :description="$t('rule_description')" @click="modal = 'rule'" />
       <DashboardCard :icon="'/assets/akili-assessment.png'" :title="$t('experts')" :description="$t('experts_description')" @click="modal = 'experts'" />
@@ -18,7 +18,7 @@
     <transition name="bot-modal">
       <NLPChatModal v-if="modal === 'nlp'" @close="modal = null" />
     </transition>
-    <AssessmentModal2 v-if="modal === 'assessment'" @close="modal = null" />
+    <AssessmentModal v-if="modal === 'assessment'" @close="modal = null" />
     <AssessmentGAD7 v-if="modal === 'assessmentGAD7'" @close="modal = null" />
     <RuleChatModal v-if="modal === 'rule'" @close="modal = null" />
     <ExpertsModal v-if="modal === 'experts'" @close="modal = null" />
@@ -57,6 +57,7 @@
 <script>
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import DashboardCard from "@/components/DashboardCard.vue";
+import AssessmentModal from "@/components/overlays/AssessmentModal.vue";
 import AssessmentModal2 from "@/components/overlays/AssessmentModal2.vue";
 import AssessmentGAD7 from "@/components/overlays/AssessmentGAD7.vue";
 import NLPChatModal from "@/components/overlays/NLPChatModal.vue";
@@ -67,6 +68,7 @@ export default {
   components: {
     LanguageSelector,
     DashboardCard,
+    AssessmentModal,
     AssessmentModal2,
     AssessmentGAD7,
     NLPChatModal,

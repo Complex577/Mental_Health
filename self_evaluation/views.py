@@ -5,9 +5,7 @@ from openai import OpenAI
 import os
 import langdetect
 from dotenv import load_dotenv
-from .models import SelfAssessment
-from .models import FeatureModelAssignment
-
+from .models import SelfAssessment, FeatureModelAssignment
 
 load_dotenv()
 
@@ -26,18 +24,43 @@ def get_model_client_for_feature(feature_key):
 
     return client, model.name, model.temperature
 
+def generate_prompt(user_type, total_score, score_max, age_group, lang, question_score_pairs, is_child=False):
+    prompt = (
+        f"You are Akili, a kind and supportive mental wellbeing assistant from PAWHA NGO.\n"
+        f"A {user_type} has completed a psychological screening and their total score is {total_score}/{score_max}.\n"
+        f"They are in the {age_group} age group and communicate in {lang}.\n"
+        f"Here are their individual question scores:\n"
+    )
+
+    for q, s in question_score_pairs:
+        prompt += f"- {q} => {s}\n"
+
+    prompt += ("\nPlease write a brief, kind response in markdown with the following sections:\n"
+        "1. **Comment on the user's mental/emotional status.**\n"
+        "2. **If score suggests concern, list possible causes.**\n"
+        f"3. {'The user is a teacher/guardian filling the form for a child, suggest ways he/she can help the child.' if is_child else 'Suggest simple self-help or support actions.'}\n"
+        "4. **End with hope-giving and encouraging words.**\n"
+        "Not necessary to list the sections as they are exactly use but generatively or use lines and to seperate concerns.**\n"
+        "You are replying to the user, use emojis.**\n"
+        "Be breif.**\n"
+        "Use the user's language. Do not give medical advice.")
+
+    return prompt
 
 @api_view(["POST"])
 def phq9_assessment(request):
     try:
         scores = request.data.get("scores", [])
+        responses = request.data.get("responses", [])
         lang_text = request.data.get("lang_text")
         user_type = request.data.get("user_type")
         age_group = request.data.get("age_group")
         sex = request.data.get("sex")
 
-        if not scores or not isinstance(scores, list) or len(scores) != 9:
-            return Response({"error": "Invalid or incomplete PHQ-9 scores."}, status=status.HTTP_400_BAD_REQUEST)
+        questions = [r.get("question") for r in responses]
+
+        if not scores or not questions or len(scores) != 9 or len(questions) != 9:
+            return Response({"error": "Invalid or incomplete PHQ-9 input."}, status=status.HTTP_400_BAD_REQUEST)
 
         total_score = sum(scores)
         lang = langdetect.detect(lang_text)
@@ -46,38 +69,20 @@ def phq9_assessment(request):
             user_type=user_type,
             age_group=age_group,
             sex=sex,
-            score=total_score,
+            score=total_score
         )
 
-        system_prompt = (
-            f"You are Akili, a kind and supportive mental wellbeing assistant from PAWHA NGO. "
-            f"A {user_type} has completed a screening for *msongo wa mawazo* (depression), and their total score is {total_score}/27. "
-            f"The user is in the {age_group} age range and speaks {lang}. "
-            f"Based on their score, provide a very short response (2–3 lines) that starts with something like: "
-            f'**"Based on your score..."** and describe their emotional wellbeing briefly. '
-            f"Do not say they *have* a condition — say they *might* be struggling or *seem* to be doing well. "
-            f"Use bold, italic, quotes, or markdown if helpful. "
-            f"Always end with a simple and polite suggestion of what they could do next. "
-            f"Do not offer medical advice."
-        )
+        prompt = generate_prompt(user_type, total_score, 27, age_group, lang, zip(questions, scores))
 
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"PHQ-9 score: {total_score}. Respond in {lang}."}
-        ]
-
-        # 🔁 Dynamic model client
         client, model_name, temperature = get_model_client_for_feature("phq9")
-
         chat_response = client.chat.completions.create(
             model=model_name,
-            messages=messages,
+            messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
             stream=False
         )
 
         result = chat_response.choices[0].message.content.strip()
-
         redirect_link = f"/followup/{record.id}" if total_score >= 19 else None
 
         return Response({
@@ -94,68 +99,75 @@ def phq9_assessment(request):
 def gad7_assessment(request):
     try:
         scores = request.data.get("scores", [])
+        responses = request.data.get("responses", [])
         lang_text = request.data.get("lang_text")
-        user_type = request.data.get("user_type")  # 'self' or 'student'
-        age_group = request.data.get("age_group")  # e.g., '10-15'
-        sex = request.data.get("sex")              # 'male', 'female', 'other'
+        user_type = request.data.get("user_type")
+        age_group = request.data.get("age_group")
+        sex = request.data.get("sex")
 
-        if not scores or not isinstance(scores, list) or len(scores) != 7:
-            return Response({"error": "Invalid or incomplete GAD-7 scores."}, status=status.HTTP_400_BAD_REQUEST)
+        questions = [r.get("question") for r in responses]
+
+        if not scores or not questions or len(scores) != 7 or len(questions) != 7:
+            return Response({"error": "Invalid or incomplete GAD-7 input."}, status=status.HTTP_400_BAD_REQUEST)
 
         total_score = sum(scores)
         lang = langdetect.detect(lang_text)
+        record = SelfAssessment.objects.create(user_type=user_type, age_group=age_group, sex=sex, score=total_score)
 
-        # Save assessment with incomplete data (contact fields null for now)
-        record = SelfAssessment.objects.create(
-            user_type=user_type,
-            age_group=age_group,
-            sex=sex,
-            score=total_score,
-        )
+        prompt = generate_prompt(user_type, total_score, 21, age_group, lang, zip(questions, scores))
 
-        system_prompt = (
-            f"You are Akili, a kind and supportive mental wellbeing assistant from PAWHA NGO. "
-            f"A {user_type} has completed a screening for *wasiwasi* (anxiety), and their total score is {total_score}/21. "
-            f"The user is in the {age_group} age range and speaks {lang}. "
-            f"Based on their score, provide a very short response (2–3 lines) that starts with something like: "
-            f'**"Based on your score..."** and describe their emotional wellbeing briefly. '
-            f"Do not say they *have* a condition — say they *might* be struggling or *seem* to be doing well. "
-            f"You may use bold, italic, quotes, or markdown if helpful. "
-            f"Always end with a simple and polite suggestion of what they could do next. "
-            f"Do not offer medical advice. You are only a friendly assistant."
-        )
-
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"GAD-7 score: {total_score}. Respond in {lang}."}
-        ]
-
-         # 🔁 Dynamic model client
         client, model_name, temperature = get_model_client_for_feature("gad7")
-
         chat_response = client.chat.completions.create(
             model=model_name,
-            messages=messages,
+            messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
             stream=False
         )
 
         result = chat_response.choices[0].message.content.strip()
+        redirect_link = f"/followup/{record.id}" if total_score >= 19 else None
 
-        # Determine if redirection is needed
-        redirect_link = None
-        if total_score >= 19:  # High risk score threshold
-            redirect_link = f"/followup/{record.id}"
-
-        return Response({
-            "score": total_score,
-            "response": result,
-            "redirect_link": redirect_link
-        }, status=status.HTTP_200_OK)
+        return Response({"score": total_score, "response": result, "redirect_link": redirect_link}, status=200)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": str(e)}, status=500)
 
+@api_view(["POST"])
+def child_assessment(request):
+    try:
+        scores = request.data.get("scores", [])
+        responses = request.data.get("responses", [])
+        lang_text = request.data.get("lang_text")
+        user_type = request.data.get("user_type")
+        age_group = request.data.get("age_group")
+        sex = request.data.get("sex")
+
+        questions = [r.get("question") for r in responses]
+
+        if not scores or not questions or len(scores) != len(questions):
+            return Response({"error": "Invalid or incomplete SDQ input."}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_score = sum(scores)
+        lang = langdetect.detect(lang_text)
+        record = SelfAssessment.objects.create(user_type=user_type, age_group=age_group, sex=sex, score=total_score)
+
+        prompt = generate_prompt(user_type, total_score, 50, age_group, lang, zip(questions, scores), is_child=True)
+
+        client, model_name, temperature = get_model_client_for_feature("sdq")
+        chat_response = client.chat.completions.create(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=temperature,
+            stream=False
+        )
+
+        result = chat_response.choices[0].message.content.strip()
+        redirect_link = f"/followup/{record.id}" if total_score >= 19 else None
+
+        return Response({"score": total_score, "response": result, "redirect_link": redirect_link}, status=200)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 
 @api_view(["POST"])

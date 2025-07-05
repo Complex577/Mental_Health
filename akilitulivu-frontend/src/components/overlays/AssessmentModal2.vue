@@ -9,7 +9,7 @@
           <p class="guide">{{ $t('select_assessment_type') }}</p>
           <button @click="selectAssessment('phq9')">{{ $t('depression_assessment') }}</button>
           <button @click="selectAssessment('gad7')">{{ $t('anxiety_assessment') }}</button>
-          <button @click="selectAssessment('child')">{{ $t('assess_child') }}</button>
+          <button @click="selectAssessment('sdq')">{{ $t('assess_child') }}</button>
         </div>
 
         <!-- Step 1: User Info -->
@@ -129,7 +129,7 @@ export default {
       switch (this.selectedTest) {
         case 'phq9': return this.$t('PHQ9_title');
         case 'gad7': return this.$t('GAD7_title');
-        case 'child': return this.$t('Child_title');
+        case 'sdq': return this.$t('Child_title');
         default: return this.$t('choose_assessment');
       }
     }
