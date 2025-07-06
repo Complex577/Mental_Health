@@ -24,8 +24,13 @@ FeatureModelAssignment.objects.create(
 )
 
 FeatureModelAssignment.objects.create(
+    feature_key="sdq",
+    model=openai
+)
+
+FeatureModelAssignment.objects.create(
     feature_key="gad7",
     model=openai
 )
 
-print("✅ Initial models and feature assignments inserted.")
+print(" Initial models and feature assignments inserted.")
