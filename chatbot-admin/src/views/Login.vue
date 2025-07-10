@@ -279,8 +279,8 @@ img {
   accent-color: var(--primary-red);
 }
 .footer {
+  margin-top: 100px;
   text-align: center;
-  margin-top: 15px;
   font-size: 13px;
   color: #888;
 }

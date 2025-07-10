@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: 'http://localhost:8000', // your Django server URL
+  baseURL: 'https://mental-health-eaap.onrender.com', // your Django server URL
   withCredentials: true,            // important to send cookies
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
