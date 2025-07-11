@@ -54,12 +54,14 @@ CORS_ALLOWED_ORIGINS = [
     "https://spam.flickflier.com",
     "https://demo.flickflier.com",
     "http://localhost:5173",  # Optional for dev
+    "http://127.0.0.1:5173",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://spam.flickflier.com",
     "https://demo.flickflier.com",
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 ROOT_URLCONF = 'akilitulivu_backend.urls'
@@ -82,20 +84,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'akilitulivu_backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
+#Database
+#https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
- 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+   }
  }
+
+
+# DATABASES = {
+ #'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+ #}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -138,14 +140,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True  # or limit to your domain/subdomain later
+CORS_ALLOW_ALL_ORIGINS = False  # or limit to your domain/subdomain later
 
 CSRF_COOKIE_HTTPONLY = False  # Vue will read this
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_COOKIE_SECURE = False         # true only if using HTTPS
+CSRF_COOKIE_SAMESITE = 'Lax'       # or 'None' if testing cross-origin
+SESSION_COOKIE_SECURE = False
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-X_FRAME_OPTIONS = 'DENY'
