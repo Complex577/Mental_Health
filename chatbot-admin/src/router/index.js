@@ -3,17 +3,31 @@ import { useAuthStore } from '../store/auth'
 import AdminLayout from '../layouts/Admin.vue'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
+import SDQ from '../views/SDQ.vue'
+import GAD7 from '../views/GAD7.vue'
+import PHQ9 from '../views/PHQ9.vue'
+import Profile from '../views/Profile.vue'
+import Education from '../views/Education.vue'
+import Referals from '../views/Referals.vue'
 import axios from '../services/api'
 
 const routes = [
   { path: '/login', component: Login },
+  { path: '/', component: Login },
 
   {
     path: '/admin',
     component: AdminLayout,
     children: [
       { path: '', redirect: '/admin/dashboard' },
-      { path: 'dashboard', component: Dashboard }
+      { path: '/admin/dashboard', component: Dashboard },
+      { path: 'dashboard', component: Dashboard },
+      { path: 'phq9', component: PHQ9 },
+      { path: 'gad7', component: GAD7 },
+      { path: 'sdq', component: SDQ },
+      { path: 'referals', component: Referals },
+      { path: 'education', component: Education},
+      { path: 'profile', component: Profile },
     ]
   },
 

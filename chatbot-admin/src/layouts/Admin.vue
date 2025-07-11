@@ -4,7 +4,7 @@
 
     <div :class="['main-content', { collapsed: sidebarCollapsed }]">
       <header class="top-bar">
-        <h3>Spam</h3>
+        <h3>Mental Health</h3>
         <button class="compose-btn"><i class="fas fa-user"></i> Complex</button>
       </header>
 
@@ -54,19 +54,20 @@ export default {
 
 .top-bar {
   height: 60px;
-  border-bottom:  3px double #2b5876;
+  border-bottom:  3px double var(--primary-red);
   display: flex;
   align-items: center;
+  background-color: var(--light-pink);
   justify-content: space-between;
   padding: 0 1rem;
-  color: white;
+  color: var(--primary-red);
 }
 .top-bar h3 {
-    color: #2b5876;
+    color: var(--primary-red);
 }
 
 .compose-btn {
-  background: #2b5876;
+  background: var(--primary-red);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 8px;
