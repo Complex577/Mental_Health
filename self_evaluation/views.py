@@ -67,6 +67,7 @@ def phq9_assessment(request):
 
         record = SelfAssessment.objects.create(
             user_type=user_type,
+            assessment_type = 'phq9',
             age_group=age_group,
             sex=sex,
             score=total_score
@@ -112,7 +113,7 @@ def gad7_assessment(request):
 
         total_score = sum(scores)
         lang = langdetect.detect(lang_text)
-        record = SelfAssessment.objects.create(user_type=user_type, age_group=age_group, sex=sex, score=total_score)
+        record = SelfAssessment.objects.create(user_type=user_type, assessment_type = 'gad7', age_group=age_group, sex=sex, score=total_score)
 
         prompt = generate_prompt(user_type, total_score, 21, age_group, lang, zip(questions, scores))
 
@@ -149,7 +150,7 @@ def child_assessment(request):
 
         total_score = sum(scores)
         lang = langdetect.detect(lang_text)
-        record = SelfAssessment.objects.create(user_type=user_type, age_group=age_group, sex=sex, score=total_score)
+        record = SelfAssessment.objects.create(user_type=user_type, assessment_type = 'sdq',  age_group=age_group, sex=sex, score=total_score)
 
         prompt = generate_prompt(user_type, total_score, 50, age_group, lang, zip(questions, scores), is_child=True)
 

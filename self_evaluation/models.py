@@ -13,7 +13,8 @@ class SelfAssessment(models.Model):
     ]
 
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
-    age_group = models.CharField(max_length=10)  # e.g., '10-15', '16-20'
+    assessment_type = models.CharField(max_length=10) #e.g phq9, gad7, sdq
+    age_group = models.CharField(max_length=10)  # (12–15 , 16–20, 21–25 , 26–30, 31–40,40+) for phq9 and gad7 (4-7, 8-12, 13-17) for sdq
     sex = models.CharField(max_length=10, choices=SEX_CHOICES)
     score = models.PositiveIntegerField()
     
@@ -48,3 +49,4 @@ class FeatureModelAssignment(models.Model):
 
     def __str__(self):
         return f"{self.feature_key} → {self.model}"
+

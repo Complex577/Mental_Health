@@ -8,4 +8,6 @@ urlpatterns = [
     path("user/", views.user_view),
     path("auth/check/", views.check_auth),
     path("change-password/", views.change_password),
+    path("phq9-stats/", views.phq9_stats),
+    path("gad7-stats/", views.gad7_stats),
 ]

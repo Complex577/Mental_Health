@@ -4,8 +4,8 @@
       <i :class="collapsed ? 'fas fa-bars' : 'fas fa-arrow-left'"></i>
     </div>
     <div class="logo" v-if="!collapsed">
-        <!--<img :src="logo" alt="logo">-->
-        FlickFlier
+        <img src="/assets/logo_final.png" alt="logo">
+        
     </div>
     <ul v-if="!collapsed">
       <li v-for="link in links" :key="link.name">
@@ -28,11 +28,12 @@ export default {
         logo,
       links: [
         { name: 'Dashboard', path: '/admin/dashboard' },
-        { name: 'Visits Rate', path: '/admin/visits' },
-        { name: 'Predictions', path: '/admin/predictions' },
-        { name: 'Compose Email', path: '/admin/compose' },
-        { name: 'Send Email', path: '/admin/send' },
-        { name: 'Logout', path: '/admin/logout' }
+        { name: 'PHQ-9', path: '/admin/phq9' },
+        { name: 'GAD-7', path: '/admin/gad7' },
+        { name: 'SDQ', path: '/admin/sdq' },
+        { name: 'Referals', path: '/admin/referals' },
+        { name: 'Education', path: '/admin/education' },
+        { name: 'Profile', path: '/admin/profile' }
       ]
     }
   }
@@ -46,8 +47,9 @@ export default {
   left: 0;
   height: 100vh;
   width: 150px;
-  background: linear-gradient(to bottom, #203a43, #2c5364);
-  color: white;
+  background: var(--light-pink);
+  color: var(--text-dark);
+  border-top-right-radius: 20px;
   padding: 1rem;
   z-index: 1001;
   transition: transform 0.3s ease;
@@ -60,12 +62,13 @@ export default {
 .toggle-button {
   position: absolute;
   top: 10px;
-  right: -45px;
-  background: var(--secondary-color);
+  right: -50px;
+  background: var(--light-pink);
+  border: 1px solid var(--primary-red);
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  color: white;
+  color: var(--primary-red);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -84,8 +87,7 @@ export default {
 .logo img {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
+  
   margin: 0 auto;
   display: block;
 }
@@ -100,15 +102,16 @@ li {
   margin-bottom: 1rem;
 }
 a {
-  color: var(--text-color);
+  color: var(--text-dark);
   font-size: 14px;
   text-decoration: none;
+  font-weight: bold;
   transition: 0.2s ease;
 }
 a:hover {
-  color: #00c6ff;
+  color: var(--primary-red);
 }
 .router-link-active {
-  color: #00c6ff;
+  color: var(--primary-red);
 }
 </style>

@@ -13,7 +13,7 @@ import axios from '../services/api'
 
 const routes = [
   { path: '/login', component: Login },
-  { path: '/', component: Login },
+  { path: '/', redirect: '/admin/dashboard'},
 
   {
     path: '/admin',
@@ -40,6 +40,7 @@ const router = createRouter({
 })
 
 // ✅ Global Navigation Guard
+
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 

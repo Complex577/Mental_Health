@@ -5,7 +5,7 @@
     <div :class="['main-content', { collapsed: sidebarCollapsed }]">
       <header class="top-bar">
         <h3>Mental Health</h3>
-        <button class="compose-btn"><i class="fas fa-user"></i> Complex</button>
+        <button class="compose-btn"><i class="fas fa-user"></i> Admin</button>
       </header>
 
       <section class="router-view-wrapper">
@@ -59,6 +59,7 @@ export default {
   align-items: center;
   background-color: var(--light-pink);
   justify-content: space-between;
+  border-radius: 10px;
   padding: 0 1rem;
   color: var(--primary-red);
 }

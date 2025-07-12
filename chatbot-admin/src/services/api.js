@@ -1,17 +1,23 @@
-// admin/src/services/api.js
 import axios from 'axios'
 
+// Utility to get a cookie by name
+function getCookie(name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
 const instance = axios.create({
-  baseURL: 'http://localhost:8000', // your Django server URL
-  withCredentials: true,            // important to send cookies
+  baseURL: 'http://127.0.0.1:8000', // Your Django dev server
+  withCredentials: true,
   headers: {
-    'X-Requested-With': 'XMLHttpRequest',
+    'X-Requested-With': 'XMLHttpRequest'
   }
 })
 
-// Automatically include CSRF token if present
+// Intercept requests to add CSRF token from cookie
 instance.interceptors.request.use(config => {
-  const token = localStorage.getItem('csrfToken')
+  const token = getCookie('csrftoken')
   if (token && ['post', 'put', 'patch', 'delete'].includes(config.method)) {
     config.headers['X-CSRFToken'] = token
   }
