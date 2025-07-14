@@ -54,26 +54,23 @@ export default {
   },
   methods: {
     async submitForm() {
-      this.loading = true;
-      this.errorMessage = '';
-      try {
-        const id = this.$route.params.id;
-        const response = await axios.post(`/api/assessment/followup/${id}/`, {
-          body: this.form
-        });
+        this.loading = true;
+        this.errorMessage = '';
+        try {
+          const id = this.$route.params.id;
+          const response = await axios.post(`/api/assessment/followup/${id}/`, this.form);
 
-        const data = await response.json();
-        if (response.ok) {
-          this.success = true;
-        } else {
-          this.errorMessage = data.error || this.$t('followup_failed');
+          
+          this.success = true;  
+
+        } catch (error) {
+          // Get error message from backend or use fallback
+          this.errorMessage = error.response?.data?.error || this.$t('followup_failed');
+        } finally {
+          this.loading = false;
         }
-      } catch (error) {
-        this.errorMessage = this.$t('followup_failed');
-      } finally {
-        this.loading = false;
       }
-    }
+
   }
 };
 </script>
