@@ -35,7 +35,7 @@
 
           <!-- Child Condition -->
           <label>{{ $t('description') }}</label>
-          <textarea v-model="form.description" :placeholder="$t('enter_description')"></textarea>
+          <textarea v-model="form.description" maxlength="200" :placeholder="$t('enter_description_child')"></textarea>
 
           <!-- Submit -->
           <button
@@ -80,7 +80,7 @@ export default {
   },
   computed: {
     isFormValid() {
-      if (!this.form.informant_type || !this.form.contact_info || !this.form.location || !this.form.description) {
+      if (!this.form.informant_type || !this.form.contact_info || !this.form.location) {
         return false;
       }
       if (this.form.informant_type === 'teacher' && !this.form.school_name) {
@@ -95,7 +95,7 @@ export default {
       this.errorMessage = '';
       try {
         const id = this.$route.params.id;
-        const response = await axios.fetch(`/api/assessment/followup/${id}/`, {
+        const response = await axios.post(`/api/assessment/followup/${id}/`, {
           body: this.form
         });
 

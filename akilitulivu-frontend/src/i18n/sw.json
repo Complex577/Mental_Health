@@ -1,7 +1,7 @@
 {
   "title" : "Karibu",
   "welcome": "Habari! Unaweza kuchagua kipengele chochote ili kupata msaada na ufahamu wa hali yako ya kisaikolojia.",
-  "welcome_chat": "Habari! Naitwa Akili kutoka PAWHA, niko hapa kukusaidia, tafadhari ikiwa una changamoto yoyote ya kisaikolojia unaweza kunieleza, nami nitakusaidia kadri niwezavyo.",
+  "welcome_chat": "Habari! Naitwa Akili kutoka PAWHA, niko hapa kukusaidia, tafadhali ikiwa una changamoto yoyote ya kisaikolojia unaweza kunieleza, nami nitakusaidia kadri niwezavyo.",
   "nlp_chatbot_name": "Akili",
   "assessment_title": "Jitathmini",
   "PHQ9_title": "Msongo wa Mawazo (PHQ-9)",
@@ -127,5 +127,14 @@
   "SDQ_22": "22. Hugawa kwa urahisi vitu vyake na watoto wengine (kalamu, peremende, vifaa vya michezo na kadhalika)",
   "SDQ_23": "23. Husaidia mtu kama ana huzuni, ameumizwa ama ni mgonjwa",
   "SDQ_24": "24. Ni mkarimu kwa watoto wadogo ",
-  "SDQ_25": "25. Mara kwa mara anajitolea kuwasaidia wengine (wazazi,walimu na watoto wenzake) "
+  "SDQ_25": "25. Mara kwa mara anajitolea kuwasaidia wengine (wazazi,walimu na watoto wenzake) ",
+
+   "informant_type": "Mtoa Taarifa",
+  "select_informant_type": "Chagua Aina ya Mtoa Taarifa",
+  "teacher": "Mwalimu",
+  "parent": "Mzazi",
+  "guardian": "Mlezi",
+  "school_name": "Jina la Shule",
+  "enter_school_name": "Weka jina la shule",
+  "enter_description_child": "Andika kwa kifupi hali ya mtoto..."
 }

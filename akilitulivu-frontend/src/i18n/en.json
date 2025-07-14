@@ -126,6 +126,15 @@
   "SDQ_22": "22. Shares readily with other children",
   "SDQ_23": "23. Helpful if someone is hurt, upset or feeling ill",
   "SDQ_24": "24. Kind to younger children",
-  "SDQ_25": "25. Often volunteers to help others"
+  "SDQ_25": "25. Often volunteers to help others",
 
+  "informant_type": "Informant Type",
+  "select_informant_type": "Select Informant Type",
+  "teacher": "Teacher",
+  "parent": "Parent",
+  "guardian": "Guardian",
+  "school_name": "School Name",
+  "enter_school_name": "Enter school name",
+  "enter_description_child": "Write a short description of the child's condition..."
+  
 }

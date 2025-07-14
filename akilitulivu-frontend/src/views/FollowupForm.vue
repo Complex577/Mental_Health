@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import axios from '../services/api'
 export default {
   data() {
     return {
@@ -57,12 +58,8 @@ export default {
       this.errorMessage = '';
       try {
         const id = this.$route.params.id;
-        const response = await fetch(`http://localhost:8000/api/assessment/followup/${id}/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(this.form)
+        const response = await axios.post(`/api/assessment/followup/${id}/`, {
+          body: this.form
         });
 
         const data = await response.json();
