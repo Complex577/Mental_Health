@@ -94,6 +94,7 @@
 
 <script>
 import { marked } from "marked";
+import axios from '../../services/api'
 
 export default {
   emits: ["close"],
@@ -182,20 +183,16 @@ methods: {
       this.loading = true;
 
       try {
-        const res = await fetch(`http://localhost:8000/api/assessment/phq9/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const res = await axios.post(`/api/assessment/phq9/`, {
             responses: this.responses,
             scores: this.responses.map(r => r.score),
             lang_text: this.questions[0].text,
             user_type: "self",
             age_group: this.form.ageGroup,
             sex: this.form.sex
-          })
         });
 
-        const data = await res.json();
+        const data = res.data;
         this.aiMessageHTML = marked.parse(data.response || "*No AI feedback.*");
         this.redirectLink = data.redirect_link || null;
       } catch (error) {

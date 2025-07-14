@@ -8,11 +8,12 @@
       <p class="guide">{{ $t('select_age_group') }}</p>
       <select v-model="form.ageGroup">
         <option disabled value="">{{ $t('choose_option') }}</option>
-        <option value="12-15">12–15</option>
-        <option value="16-20">16–20</option>
-        <option value="21-25">21–25</option>
-        <option value="26-30">26–30</option>
-        <option value="31-40">31–40</option>
+        <option value="10-14">10–14</option>
+        <option value="15-17">15–17</option>
+        <option value="18-24">18–24</option>
+        <option value="25-30">25–30</option>
+        <option value="31-35">31–35</option>
+        <option value="36-40">36–40</option>
         <option value="41+">40+</option>
       </select>
 
@@ -85,6 +86,7 @@
 
 <script>
 import { marked } from "marked";
+import axios from '../../services/api'
 
 export default {
   emits: ["close"],
@@ -173,20 +175,16 @@ methods: {
       this.loading = true;
 
       try {
-        const res = await fetch(`http://localhost:8000/api/assessment/gad7/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const res = await axios.post(`/api/assessment/gad7/`, {
             responses: this.responses,
             scores: this.responses.map(r => r.score),
             lang_text: this.questions[0].text,
             user_type: "self",
             age_group: this.form.ageGroup,
             sex: this.form.sex
-          })
         });
 
-        const data = await res.json();
+        const data = res.data;
         this.aiMessageHTML = marked.parse(data.response || "*No AI feedback.*");
         this.redirectLink = data.redirect_link || null;
       } catch (error) {

@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import axios from '../../services/api'
 export default {
   emits: ["close", "submit"],
   data() {
@@ -63,8 +64,8 @@ export default {
     async fetchRegions() {
       this.loading = true;
       try {
-        const res = await fetch("http://localhost:8000/api/experts/regions/");
-        const json = await res.json();
+        const res = await axios.get("/api/experts/regions/");
+        const json = res.data;
         this.regions = json.regions || [];
       } catch (e) {
         console.error("Error fetching regions", e);
@@ -80,8 +81,8 @@ export default {
 
       this.loading = true;
       try {
-        const res = await fetch(`http://localhost:8000/api/experts/regions/${encodeURIComponent(this.region)}/districts/`);
-        const json = await res.json();
+        const res = await axios.get(`/api/experts/regions/${encodeURIComponent(this.region)}/districts/`);
+        const json = res.data;
         this.districts = json.districts || [];
       } catch (e) {
         console.error("Error fetching districts", e);
@@ -94,8 +95,8 @@ export default {
       this.results = [];
 
       try {
-        const res = await fetch(`http://localhost:8000/api/experts/search/?region=${this.region}&district=${this.district}`);
-        const json = await res.json();
+        const res = await axios.get(`/api/experts/search/?region=${this.region}&district=${this.district}`);
+        const json = res.data;
         this.results = json.experts || [];
       } catch (e) {
         console.error("Error fetching experts", e);

@@ -15,7 +15,7 @@ class ContentNode(models.Model):
     node_type = models.CharField(max_length=20, choices=NODE_TYPES)
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at= models.DateTimeField()
+    updated_at= models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title_en

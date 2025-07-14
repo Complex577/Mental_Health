@@ -53,7 +53,7 @@
 
       <!-- Bottom action bar -->
       <div class="actions">
-        <button class="back-btn" v-if="stack.length > 0" @click="goBack" :disabled="loading">
+        <button class="back-btn" v-if="stack.length > 0 || loading" @click="goBack" :disabled="loading">
           <span v-if="loading" class="dots-loader">
             <span></span><span></span><span></span>
           </span>
@@ -65,6 +65,8 @@
 </template>
 
 <script>
+import axios from '../../services/api';
+
 export default {
   emits: ["close"],
   data() {
@@ -85,13 +87,13 @@ export default {
       this.stack = [];
       this.history = [];
       this.loading = true;
-      const res = await fetch(`http://localhost:8000/api/education/content/roots/?type=${type}`);
-      const data = await res.json();
+      const res = await axios.get(`/api/education/content/roots/?type=${type}`);
+      const data = res.data;
 
       if (data.length) {
         const root = data[0];
-        const childrenRes = await fetch(`http://localhost:8000/api/education/content/${root.id}/children/`);
-        const children = await childrenRes.json();
+        const childrenRes = await axios.get(`/api/education/content/${root.id}/children/`);
+        const children = childrenRes.data;
 
         this.stack.push(root.id);
         this.history.push({
@@ -106,8 +108,8 @@ export default {
 
     async loadChildren(node) {
       this.loading = true;
-      const childrenRes = await fetch(`http://localhost:8000/api/education/content/${node.id}/children/`);
-      const children = await childrenRes.json();
+      const childrenRes = await axios.get(`/api/education/content/${node.id}/children/`);
+      const children = childrenRes.data;
 
       this.stack.push(node.id);
       this.history.push({

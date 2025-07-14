@@ -3,29 +3,53 @@
     <transition name="modal-grow" mode="out-in">
       <div class="modal">
         <h2>{{ $t('followup_support') }}</h2>
-
         <p class="guide" v-if="!success">{{ $t('followup_instruction') }}</p>
 
         <!-- Form -->
         <div class="intro-form" v-if="!success">
+          <!-- Informant Type -->
+          <label>{{ $t('informant_type') }}</label>
+          <select v-model="form.informant_type">
+            <option disabled value="">{{ $t('select_informant_type') }}</option>
+            <option value="teacher">{{ $t('teacher') }}</option>
+            <option value="parent">{{ $t('parent') }}</option>
+            <option value="guardian">{{ $t('guardian') }}</option>
+          </select>
+
+          <!-- School name (required only for teachers) -->
+          <label>{{ $t('school_name') }}</label>
+          <input
+            v-model="form.school_name"
+            type="text"
+            :placeholder="$t('enter_school_name')"
+            :required="form.informant_type === 'teacher'"
+          />
+
+          <!-- Contact Info -->
           <label>{{ $t('contact_info') }}</label>
           <input v-model="form.contact_info" type="text" :placeholder="$t('enter_contact')" />
 
+          <!-- Region -->
           <label>{{ $t('location') }}</label>
           <input v-model="form.location" type="text" :placeholder="$t('enter_location')" />
 
+          <!-- Child Condition -->
           <label>{{ $t('description') }}</label>
           <textarea v-model="form.description" :placeholder="$t('enter_description')"></textarea>
 
-          <button :disabled="!form.contact_info || !form.location || loading" @click="submitForm">
-            <span v-if="loading" class="spinner"></span>
+          <!-- Submit -->
+          <button
+            :disabled="!isFormValid || loading"
+            @click="submitForm"
+          >
+            <span v-if="loading" disabled class="spinner"></span>
             {{ $t('submit') }}
           </button>
 
-          <p v-if="errorMessage" disabled class="error-msg">{{ errorMessage }}</p>
+          <p v-if="errorMessage" class="error-msg">{{ errorMessage }}</p>
         </div>
 
-        <!-- Success message -->
+        <!-- Success Message -->
         <div v-else class="success-msg">
           <p>{{ $t('followup_success_message') }}</p>
           <router-link to="/">
@@ -38,10 +62,13 @@
 </template>
 
 <script>
+import axios from '../services/api'
 export default {
   data() {
     return {
       form: {
+        informant_type: '',
+        school_name: '',
         contact_info: '',
         location: '',
         description: ''
@@ -51,18 +78,25 @@ export default {
       errorMessage: ''
     };
   },
+  computed: {
+    isFormValid() {
+      if (!this.form.informant_type || !this.form.contact_info || !this.form.location || !this.form.description) {
+        return false;
+      }
+      if (this.form.informant_type === 'teacher' && !this.form.school_name) {
+        return false;
+      }
+      return true;
+    }
+  },
   methods: {
     async submitForm() {
       this.loading = true;
       this.errorMessage = '';
       try {
         const id = this.$route.params.id;
-        const response = await fetch(`http://localhost:8000/api/assessment/followup/${id}/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(this.form)
+        const response = await axios.fetch(`/api/assessment/followup/${id}/`, {
+          body: this.form
         });
 
         const data = await response.json();

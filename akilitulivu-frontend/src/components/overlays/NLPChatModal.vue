@@ -48,6 +48,7 @@
 
 <script>
 import { marked } from "marked";
+import axios from '../../services/api'
 
 const SESSION_KEY = "akilitulivu_chat_session";
 const SESSION_EXPIRY_KEY = "akilitulivu_chat_session_time";
@@ -92,16 +93,12 @@ export default {
 
       try {
         const history = this.messages.slice(-10);
-        const res = await fetch("http://localhost:8000/api/chatbot/ask_akili/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const res = await axios.post("/api/chatbot/ask_akili/", {
             message: userText,
             history: history
-          })
         });
 
-        const data = await res.json();
+        const data = res.data;
         this.messages.push({ text: data.response || "Sorry, I couldn’t understand that.", sender: "bot" });
       } catch (error) {
         console.log(error);

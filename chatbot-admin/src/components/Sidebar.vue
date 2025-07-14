@@ -49,6 +49,7 @@ export default {
   width: 150px;
   background: var(--light-pink);
   color: var(--text-dark);
+  border-right: 3px solid var(--primary-red);
   border-top-right-radius: 20px;
   padding: 1rem;
   z-index: 1001;

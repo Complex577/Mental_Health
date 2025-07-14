@@ -14,6 +14,11 @@ const router = createRouter({
       name: 'FollowupForm',
       component: () => import('@/views/FollowupForm.vue')
     },
+    {
+      path: '/followup/child/:id',
+      name: 'ChildFollowupForm',
+      component: () => import('@/views/ChildFollowUp.vue')
+    },
 
     {
       //path: '/about',

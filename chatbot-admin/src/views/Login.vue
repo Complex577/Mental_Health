@@ -8,6 +8,7 @@
         </div>
 
         <div class="login-form">
+          <h3>Admin Pannel</h3>
           <div class="input-group" :class="{ filled: form.email }">
             <label>Email</label>
             <input
@@ -156,6 +157,11 @@ export default {
 img {
   width: 80px;
   height: 70px;
+}
+.login-form h3 {
+  color: var(--primary-red);
+  font-weight: bold;
+  text-align: center;
 }
 .login-form {
   display: flex;

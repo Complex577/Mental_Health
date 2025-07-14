@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="gad7-dashboard">
     <h2 class="title">GAD-7 Anxiety Statistics Overview</h2>
 
     <Loader v-if="loading" />
 
-    <div v-else class="grid gap-4">
+    <div v-else class="dashboard-content">
       <!-- Stat Cards -->
-      <div class="grid md:grid-cols-4 gap-4">
+      <div class="stats-grid">
         <StatCard title="Total Responses" :value="stats.total" icon="fas fa-list" />
         <StatCard title="Average Score" :value="stats.average_score" icon="fas fa-chart-line" />
         <StatCard title="High Risk (≥15)" :value="stats.high_risk" icon="fas fa-exclamation-triangle" />
@@ -14,17 +14,24 @@
       </div>
 
       <!-- Charts -->
-      <div class="grid md:grid-cols-2 gap-4 mt-4">
-        <UserSexBarChart :data="stats.user_sex_chart" title="By User Type & Sex" />
-        <AgeGroupBarChart :data="stats.age_group_chart" title="By Age Group" />
+      <div class="charts-grid">
+        <div class="chart-section">
+          <h3>User Type & Sex Distribution</h3>
+          <UserSexBarChart :data="stats.user_sex_chart" title="By User Type & Sex" />
+        </div>
+        <div class="chart-section">
+            <h3>Age Group Distribution</h3>
+          <AgeGroupBarChart :data="stats.age_group_chart" title="By Age Group" />
+        </div>
       </div>
 
-      <div class="mt-4">
+      <div class="chart-section pie">
+        <h3>Score Range Breakdown</h3>
         <ScorePieChart :data="stats.score_ranges" title="Score Ranges" />
       </div>
 
       <!-- Table -->
-      <div class="mt-6">
+      <div class="raw-table">
         <h3 class="table-title">10 Most Recent GAD-7 Assessments</h3>
         <RecentAssessmentTable :rows="stats.recent" />
       </div>
@@ -66,15 +73,101 @@ onMounted(fetchStats)
 </script>
 
 <style scoped>
+.gad7-dashboard {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.6s ease-in;
+}
+
 .title {
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--primary-red);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
 }
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 1rem;
+}
+
+.stats-grid > * {
+  flex: 1 1 180px;
+  max-width: 220px;
+}
+
+.charts-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 1rem;
+}
+
+.chart-section {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  flex: 1 1 300px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.pie {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+  text-align: center;
+}
+
+.raw-table {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
+  overflow-x: auto;
+}
+
 .table-title {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
   color: var(--primary-red);
+}
+
+/* Responsive enhancements */
+@media (max-width: 768px) {
+  .stats-grid,
+  .charts-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stats-grid > *,
+  .chart-section,
+  .pie {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

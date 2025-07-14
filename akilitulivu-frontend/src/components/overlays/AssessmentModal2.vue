@@ -97,6 +97,7 @@
 
 <script>
 import { marked } from "marked";
+import axios from '../../services/api'
 
 export default {
   emits: ["close"],
@@ -169,7 +170,7 @@ export default {
       this.loading = true;
       try {
         const lang_sample = this.questions[0].text;
-        const res = await fetch(`http://localhost:8000/api/assessment/${this.selectedTest}/`, {
+        const res = await axios.fetch(`/api/assessment/${this.selectedTest}/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

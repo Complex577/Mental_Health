@@ -92,6 +92,7 @@
 
 <script>
 import { marked } from 'marked';
+import axios from '../../services/api'
 
 const RAW_QUESTIONS = [
   'SDQ_1', 'SDQ_2', 'SDQ_3', 'SDQ_4', 'SDQ_5',
@@ -196,20 +197,16 @@ methods: {
     async submit() {
   this.loading = true;
         try {
-          const res = await fetch(`http://localhost:8000/api/assessment/sdq/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+          const res = await axios.post(`/api/assessment/sdq/`, {
               responses: this.responses,
               scores: this.responses.map(r => r.score),
               lang_text: this.questions[0].text,
               user_type: 'child',
               age_group: this.form.ageGroup,
               sex: this.form.sex
-            })
           });
 
-          const data = await res.json();
+          const data = res.data;
 
           // Calculate SDQ subscores
           this.difficultiesScore = this.responses

@@ -96,6 +96,7 @@
 
 <script>
 import { marked } from "marked";
+import axios from '../../services/api'
 
 export default {
   emits: ["close"],
@@ -146,16 +147,12 @@ export default {
       this.loading = true;
       try {
         const lang_sample = this.questions[0].text;
-        const res = await fetch("http://localhost:8000/api/assessment/gad7/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
+        const res = await axios.fetch("/api/assessment/gad7/", {
             scores: this.scores,
             lang_text: lang_sample,
             user_type: this.formData.userType,
             age_group: this.formData.ageGroup,
             sex: this.formData.sex,
-          })
         });
 
         const data = await res.json();
